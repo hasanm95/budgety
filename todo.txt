@@ -1,0 +1,6 @@
+1.Add Event Handler
+2.Get Input Values
+3.Add new item to our data structure
+4.Add new item to the UI
+5.Calculate Budget
+6.Update UI

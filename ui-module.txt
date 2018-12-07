@@ -1,0 +1,3 @@
+1.Get Input Values
+2.Add new item to the UI
+3.Update UI
