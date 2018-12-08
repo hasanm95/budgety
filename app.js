@@ -64,19 +64,6 @@ var budgetController = (function(){
         
     };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 })();
 
 // UI Controller
@@ -121,6 +108,16 @@ var UIController = (function(){
             newHtml = newHtml.replace('%description%', item.description);
             newHtml = newHtml.replace('%value%', item.value);
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+        },
+        clearFields: function(){
+            var fieldsArr, fields;
+
+            fields = document.querySelectorAll(DOMStrings.inputDesc +', '+ DOMStrings.inputValue);
+            fieldsArr = Array.prototype.slice.call(fields);
+            fieldsArr.forEach(function(cur, index, array){
+                cur.value = '';
+            });
+            fieldsArr[0].focus();
         }
     }
 
@@ -156,6 +153,7 @@ var controller = (function(budgetCtrl, UICtrl){
 
         // 3. Add the item to the UI
         UICtrl.addListItem(newItem, input.type);
+        UICtrl.clearFields();
 
         // 4. Calculate Budget
 
