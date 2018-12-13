@@ -89,9 +89,24 @@ var budgetController = (function(){
                 percentage: data.percentage
             }
         },
+        deleteItem: function(type, id){
+            var ids, index;
+            // id = 3
+            // ids = [1,2,3,5,7,8]
+            // index = 2
+            
+            ids = data.allItems[type].map(function(current){
+                return current.id;
+            });
+            
+            index = ids.indexOf(id);
+            if(index !== -1){
+                data.allItems[type].splice(index, 1);
+            }
+            
+        },
         testing: function(){
             console.log(data);
-            console.log(calculateTotal);
         }
         
     };
@@ -103,6 +118,7 @@ var UIController = (function(){
 
     // DOM Strings
     var DOMStrings = {
+        container: '.container',
         inputType: '.add__type',
         inputDesc: '.add__description',
         inputValue: '.add__value',
@@ -133,11 +149,11 @@ var UIController = (function(){
             if(type === 'inc'){
                 element = DOMStrings.incomeContainer;
 
-                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">+ %value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                html = '<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">+ %value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }else{
                 element = DOMStrings.expenseContainer;
 
-                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">- %value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+                html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">- %value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
             }
 
             newHtml = html.replace('%id%', item.id);
@@ -179,7 +195,7 @@ var controller = (function(budgetCtrl, UICtrl){
         // Get Dom Strings
         var DOM = UICtrl.getDOMStrings();
 
-        // Setup event handler
+        // Setup click event handler
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
 
         // Setup Keypress Event
@@ -188,6 +204,9 @@ var controller = (function(budgetCtrl, UICtrl){
                 ctrlAddItem();
             }
         });
+
+        // Setup Delete event handler
+        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
     };
 
     var updateBudget = function(){
@@ -213,13 +232,28 @@ var controller = (function(budgetCtrl, UICtrl){
             // 3. Add the item to the UI
             UICtrl.addListItem(newItem, input.type);
             UICtrl.clearFields();
+
+            // 4. Calculate Budget
+            updateBudget();
         }
-
-        // 4. Calculate Budget
-        updateBudget();
-
-        // 5. Display the budget on UI
     };
+
+    var ctrlDeleteItem = function(event){
+        var itemID, splitID, type, ID;
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+        if(itemID){
+            splitID = itemID.split('-');
+            type = splitID[0];
+            ID = parseInt(splitID[1]);
+
+            // 1. Delete the item from the data structure
+            budgetCtrl.deleteItem(type, ID);
+
+            // 2. Delete the ite form UI
+
+            // 3. Update Budget
+        }
+    }
 
     return {
         init: function(){
